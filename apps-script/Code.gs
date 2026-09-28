@@ -11,11 +11,18 @@
  *
  * A URL do app fica só no Worker e toda chamada precisa do token; sem ele,
  * nada é gravado.
+ *
+ * Colunas: a planilha decide. Na aba vazia, o primeiro lead cria o cabeçalho
+ * completo; depois disso, só as colunas que estão no cabeçalho são preenchidas.
+ * Pode apagar ou reordenar colunas à vontade. Para trazer uma de volta, digite
+ * o nome exato dela no cabeçalho ou rode `restaurarColunas`. A coluna
+ * "ID do diagnóstico" é sempre mantida, porque é ela que evita linhas duplicadas.
  */
 
 const SHEET_NAME = 'Leads';
 const ID_HEADER = 'ID do diagnóstico';
 const TOKEN_PROPERTY = 'LEAD_TOKEN';
+const COLUNAS_PROPERTY = 'COLUNAS_DO_SITE';
 const MAX_CELL = 5000;
 
 function doPost(e) {
@@ -34,10 +41,13 @@ function doPost(e) {
     lock.waitLock(20000);
     try {
       const sheet = aba_();
-      const headers = cabecalho_(sheet, Object.keys(lead));
+      const keys = Object.keys(lead);
+      const headers = cabecalho_(sheet, keys);
+      // Guarda as colunas que o site envia, para o `restaurarColunas`.
+      PropertiesService.getScriptProperties().setProperty(COLUNAS_PROPERTY, JSON.stringify(keys));
       // O site reenvia leads que falharam; o mesmo ID nunca vira duas linhas.
       if (jaExiste_(sheet, headers, lead[ID_HEADER])) return resposta_({ ok: true, duplicate: true });
-      sheet.appendRow(headers.map(function (h) { return celula_(lead[h]); }));
+      sheet.appendRow(headers.map(function (h) { return h ? celula_(lead[h]) : ''; }));
     } finally {
       lock.releaseLock();
     }
@@ -76,14 +86,38 @@ function aba_() {
   return sheet;
 }
 
-/** Garante que todas as chaves do lead existam como coluna; as novas entram no fim. */
-function cabecalho_(sheet, keys) {
+/** Rode pelo editor para trazer de volta, no fim do cabeçalho, as colunas do site que foram apagadas. */
+function restaurarColunas() {
+  const salvas = JSON.parse(PropertiesService.getScriptProperties().getProperty(COLUNAS_PROPERTY) || '[]');
+  if (!salvas.length) {
+    console.log('Ainda não chegou nenhum lead depois desta versão do script; nada a restaurar.');
+    return;
+  }
+  const sheet = aba_();
+  const headers = lerCabecalho_(sheet);
+  const faltando = salvas.filter(function (k) { return headers.indexOf(k) === -1; });
+  if (faltando.length) sheet.getRange(1, headers.length + 1, 1, faltando.length).setValues([faltando]).setFontWeight('bold');
+  console.log(faltando.length ? 'Colunas restauradas: ' + faltando.join(', ') : 'Nenhuma coluna faltando.');
+}
+
+function lerCabecalho_(sheet) {
   const lastCol = sheet.getLastColumn();
-  const headers = lastCol > 0 ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(String) : [];
-  const novas = keys.filter(function (k) { return headers.indexOf(k) === -1; });
-  if (novas.length) {
-    sheet.getRange(1, headers.length + 1, 1, novas.length).setValues([novas]).setFontWeight('bold');
-    return headers.concat(novas);
+  return lastCol > 0 ? sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function (h) { return String(h).trim(); }) : [];
+}
+
+/**
+ * A planilha decide as colunas: só as que estão no cabeçalho são preenchidas, em qualquer ordem.
+ * Numa aba vazia, cria o cabeçalho completo. A coluna do ID é recriada se for apagada.
+ */
+function cabecalho_(sheet, keys) {
+  const headers = lerCabecalho_(sheet);
+  if (headers.every(function (h) { return !h; })) {
+    sheet.getRange(1, 1, 1, keys.length).setValues([keys]).setFontWeight('bold');
+    return keys.slice();
+  }
+  if (headers.indexOf(ID_HEADER) === -1) {
+    sheet.getRange(1, headers.length + 1).setValue(ID_HEADER).setFontWeight('bold');
+    return headers.concat([ID_HEADER]);
   }
   return headers;
 }

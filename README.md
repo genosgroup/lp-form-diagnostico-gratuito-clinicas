@@ -60,7 +60,11 @@ Os leads vão para uma planilha do Google por um Apps Script publicado como App 
    ```
    (ou no painel: *Workers > lp-form-diagnostico-gratuito-clinicas > Settings > Variables and Secrets*, como **Secret**).
 
-A aba **Leads** e o cabeçalho são criados no primeiro envio. Colunas novas que o site passar a mandar entram no fim, sem mexer nas existentes. Se o código do Apps Script mudar, publique uma **nova versão** da mesma implantação (*Implantar > Gerenciar implantações > editar*), para a URL continuar a mesma. Para trocar o token, rode `trocarToken` e atualize o secret.
+A aba **Leads** é criada pelo `configurar` e o cabeçalho completo nasce com o primeiro lead.
+
+**Colunas: a planilha decide.** Depois do cabeçalho criado, só as colunas que estão nele são preenchidas. Pode apagar as que não quer e reordenar à vontade; nada quebra e elas não voltam sozinhas. Para trazer uma coluna de volta, digite o nome exato dela no cabeçalho ou rode `restaurarColunas` pelo editor, que devolve todas as que o site envia e estão faltando. A única que não pode sair é **ID do diagnóstico**: é ela que impede linhas duplicadas, e se for apagada volta sozinha no fim.
+
+Se o código do Apps Script mudar, cole a versão nova, salve e publique uma **nova versão** da mesma implantação (*Implantar > Gerenciar implantações > lápis > Versão: Nova versão > Implantar*), para a URL continuar a mesma. Para trocar o token, rode `trocarToken` e atualize o secret.
 
 **O que vai para cada linha:** data/hora, código do diagnóstico, nome, WhatsApp, as 7 respostas, índice, classificação, temperatura (HOT/QUENTE/MORNO/FRIO), maturidade, base estimada e inativa, os 3 cenários em R$, os 3 gargalos, `utm_source`/`medium`/`campaign`/`content`/`term`/`id`, `gclid`/`gbraid`/`wbraid`/`fbclid`/`fbc`/`fbp`, página de entrada, referrer, tempo no quiz, a mensagem pronta para o WhatsApp, o link do card, o texto do consentimento, IP, navegador e versão do quiz.
 

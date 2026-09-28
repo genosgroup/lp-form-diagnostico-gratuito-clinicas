@@ -1,17 +1,17 @@
 # LP Diagnóstico Gratuito para Clínicas (Receita Oculta)
 
-Quiz de 7 perguntas que estima a receita parada na base de pacientes de uma clínica, captura nome e WhatsApp e mostra o diagnóstico completo. Feito em **Next.js + TypeScript + Tailwind CSS** e publicado no **Cloudflare Workers** (OpenNext), no mesmo padrão das outras LPs da Genos.
+Quiz de 7 perguntas que estima a receita parada na base de pacientes de uma clínica, captura nome e WhatsApp e mostra o diagnóstico completo. Feito em **Next.js + TypeScript + Tailwind CSS** e publicado no **Cloudflare Workers** (OpenNext), no mesmo padrão das outras LPs da Genos. Endereço: **[genosgroup.com.br/diagnostico](https://genosgroup.com.br/diagnostico)**.
 
 ## Rodando localmente
 
 ```bash
 npm install
 cp .env.example .env.local   # e preencha as variáveis (ver "Planilha")
-npm run dev                  # http://localhost:3000
+npm run dev                  # http://localhost:3000/diagnostico
 ```
 
-- `http://localhost:3000/#resultado-exemplo` abre a tela de resultado com respostas fictícias (não envia nada).
-- `http://localhost:3000/card` mostra o card 1080×1350 de exemplo.
+- `http://localhost:3000/diagnostico#resultado-exemplo` abre a tela de resultado com respostas fictícias (não envia nada).
+- `http://localhost:3000/diagnostico/card` mostra o card 1080×1350 de exemplo.
 - `npm run preview` roda o build dentro do runtime do Worker (mais próximo da produção).
 
 ## Variáveis de ambiente
@@ -71,7 +71,7 @@ A aba **Leads** e o cabeçalho são criados no primeiro envio. Colunas novas que
 - **Antispam:** honeypot invisível, tempo mínimo de quiz, checagem de origem (só aceita envios da própria LP), limite de 10 envios por minuto por IP (binding `ratelimits` do Worker) e limite de tamanho do corpo.
 - **Planilha:** gravação com lock, deduplicação pelo código do diagnóstico (reenvios não duplicam linhas) e proteção contra injeção de fórmula (`=`, `+`, `-`, `@`).
 - **Cabeçalhos:** CSP, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS e COOP, em `next.config.ts`. A CSP já libera GTM, Google Analytics e Pixel da Meta para quando as tags forem instaladas.
-- O card (`/card`) só aceita o nome como texto livre (validado); os valores são recalculados das respostas, então não dá para gerar um card com números inventados.
+- O card (`/diagnostico/card`) só aceita o nome como texto livre (validado); os valores são recalculados das respostas, então não dá para gerar um card com números inventados.
 
 ## Rastreamento
 
@@ -84,4 +84,4 @@ O site roda no Cloudflare Workers com o adaptador [OpenNext](https://opennext.js
 - **Automático:** cada push na `main` publica pelo GitHub Actions (`.github/workflows/deploy.yml`). O repositório precisa dos segredos `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` em *Settings > Secrets and variables > Actions*.
 - **Manual:** `npx wrangler login` e depois `npm run deploy`.
   - No Windows, o `opennextjs-cloudflare deploy` pode falhar ao iniciar o runtime local (`workerd`: *access violation*). Nesse caso, depois do build, publique direto com o wrangler: `npm run cf:build` e então `OPEN_NEXT_DEPLOY=true npx wrangler deploy` (no PowerShell: `$env:OPEN_NEXT_DEPLOY="true"; npx wrangler deploy`). Sempre que possível, prefira o deploy automático (Linux).
-- **Endereço:** por enquanto só o `workers.dev` (`https://lp-form-diagnostico-gratuito-clinicas.group-656.workers.dev`). Um domínio ou rota, se vier, é ligado no painel da Cloudflare (*Settings > Domains & Routes*), e não no `wrangler.jsonc`.
+- **Endereço:** `genosgroup.com.br/diagnostico`. O Next serve tudo sob o `basePath` `/diagnostico` (`src/lib/site.ts`) e a rota `genosgroup.com.br/diagnostico*` aponta para este Worker (Cloudflare > *Workers Routes* da zona `genosgroup.com.br`), não no `wrangler.jsonc`, como no ebook. O resto do domínio continua no Worker `lp-genos-principal`. No `workers.dev` (`https://lp-form-diagnostico-gratuito-clinicas.group-656.workers.dev`), a raiz redireciona para `/diagnostico`.

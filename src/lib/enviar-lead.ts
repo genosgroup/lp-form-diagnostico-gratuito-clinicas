@@ -4,6 +4,7 @@
  * IDs repetidos, então reenviar é seguro).
  */
 import type { LeadRequest, LeadResponse } from "./lead";
+import { BASE_PATH } from "./site";
 
 const PENDENTES_KEY = "ro_pendentes";
 const PENDENTE_VALIDADE_MS = 7 * 24 * 60 * 60 * 1000;
@@ -35,7 +36,7 @@ type Resultado = "ok" | "retry" | "rejected";
 
 async function post(lead: LeadRequest): Promise<Resultado> {
   try {
-    const res = await fetch("/api/lead", {
+    const res = await fetch(`${BASE_PATH}/api/lead`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(lead),

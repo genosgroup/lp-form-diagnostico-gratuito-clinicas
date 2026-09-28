@@ -4,7 +4,7 @@
  * As chaves são os títulos das colunas: o Apps Script cria o cabeçalho na
  * primeira gravação, na ordem abaixo, e acrescenta no fim qualquer coluna nova.
  */
-import { CONSENT_TEXT, PRIVACY_URL, QUIZ_VERSION, TIME_ZONE } from "./site";
+import { BASE_PATH, CONSENT_TEXT, PRIVACY_URL, QUIZ_VERSION, TIME_ZONE } from "./site";
 import { codigoCurto, dataCurta, fmtBRL, fmtN, pctTxt } from "./format";
 import type { LeadRequest } from "./lead";
 import { codificarRespostas, labelDe, type Resultado } from "./quiz/calc";
@@ -40,7 +40,7 @@ export function cardUrl(origin: string, lead: LeadRequest, agora: Date) {
     d: dataCurta(agora),
     r: codificarRespostas(lead.respostas),
   });
-  return `${origin}/card?${q.toString()}`;
+  return `${origin}${BASE_PATH}/card?${q.toString()}`;
 }
 
 export function montarLinha(lead: LeadRequest, x: Resultado, meta: { agora: Date; origin: string; ip: string; userAgent: string }): SheetRow {

@@ -8,7 +8,7 @@ import { calcular, decodificarRespostas, type Answers } from "@/lib/quiz/calc";
 /*
  * Card 1080×1350 do diagnóstico, para gerar a imagem enviada pelo WhatsApp.
  * O link completo é gravado na planilha (coluna "Link do card"):
- *   /card?n=<nome>&c=<RO-XXXX-XXX>&d=<dd/mm/aaaa>&r=<um dígito por resposta>
+ *   /diagnostico/card?n=<nome>&c=<RO-XXXX-XXX>&d=<dd/mm/aaaa>&r=<um dígito por resposta>
  * Só o nome é texto livre (validado); números e gargalos são recalculados das respostas,
  * então não dá para montar um card com valores inventados.
  * Quando as fontes carregam, <html data-ready="1"> sinaliza a ferramenta de screenshot.

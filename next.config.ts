@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { BASE_PATH } from "./src/lib/site";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -33,9 +34,16 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Mesma URL pública: genosgroup.com.br/diagnostico
+  basePath: BASE_PATH,
   poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  // No domínio a raiz é da LP principal; isto só vale para o endereço workers.dev,
+  // cuja raiz levaria a um 404.
+  async redirects() {
+    return [{ source: "/", destination: BASE_PATH, basePath: false, permanent: false }];
   },
 };
 

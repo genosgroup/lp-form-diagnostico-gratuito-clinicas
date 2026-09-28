@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, IBM_Plex_Mono, Manrope } from "next/font/google";
+import { BASE_PATH, SITE_URL, asset } from "@/lib/site";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -23,14 +24,16 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Receita Oculta da Clínica",
   description: "Descubra em menos de 60 segundos o potencial estimado de receita entre pacientes que já conhecem sua clínica.",
+  alternates: { canonical: `${SITE_URL}${BASE_PATH}` },
   icons: {
     icon: [
-      { url: "/images/genos-preto-150x150.png", sizes: "32x32" },
-      { url: "/images/genos-preto.png", sizes: "192x192" },
+      { url: asset("/images/genos-preto-150x150.png"), sizes: "32x32" },
+      { url: asset("/images/genos-preto.png"), sizes: "192x192" },
     ],
-    apple: "/images/genos-preto.png",
+    apple: asset("/images/genos-preto.png"),
   },
 };
 

@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Worker gerado pelo OpenNext a partir do build do Next.js
+  "name": "lp-form-diagnostico-gratuito-clinicas",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      // Referência ao próprio Worker, exigida pelo OpenNext (o nome precisa ser igual ao "name")
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "lp-form-diagnostico-gratuito-clinicas"
+    }
+  ],
+  "ratelimits": [
+    {
+      // Limite de envios do formulário por IP (usado em src/app/api/lead/route.ts)
+      "name": "LEAD_RATE_LIMITER",
+      "namespace_id": "4101",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+
+  // SHEETS_WEBHOOK_URL e SHEETS_WEBHOOK_TOKEN são secrets do Worker (não ficam no
+  // repositório). Configure uma vez com `npx wrangler secret put <NOME>`; o deploy não mexe neles.
+  //
+  // Domínio e rotas NÃO são declarados aqui de propósito: ficam no painel da
+  // Cloudflare, em Settings > Domains & Routes, assim o deploy nunca mexe no
+  // domínio sem querer.
+}

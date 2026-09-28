@@ -1,0 +1,54 @@
+# Publica a LP no Cloudflare Workers (via OpenNext).
+#
+# Roda sozinho a cada push na branch main, e também pode ser disparado à mão
+# em Actions > Publicar no Cloudflare > Run workflow.
+#
+# Precisa de dois segredos em Settings > Secrets and variables > Actions:
+#   CLOUDFLARE_API_TOKEN   token com permissão de editar Workers
+#   CLOUDFLARE_ACCOUNT_ID  o id da conta Cloudflare
+#
+# SHEETS_WEBHOOK_URL e SHEETS_WEBHOOK_TOKEN são secrets do próprio Worker (configurados uma vez na
+# Cloudflare); o deploy não mexe neles.
+name: Publicar no Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-lp-form-diagnostico-gratuito-clinicas
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Conferir se os segredos estão configurados
+        run: |
+          faltou=0
+          [ -n "$CLOUDFLARE_API_TOKEN" ]  || { echo "::error::Falta o segredo CLOUDFLARE_API_TOKEN."; faltou=1; }
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || { echo "::error::Falta o segredo CLOUDFLARE_ACCOUNT_ID."; faltou=1; }
+          exit $faltou
+
+      - run: npm ci
+
+      - name: Build e publicação
+        run: npm run deploy
+
+      - name: Onde a LP ficou
+        run: |
+          echo "### LP publicada" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "O endereço workers.dev aparece no passo **Build e publicação**, na linha que começa com \`https://\`." >> "$GITHUB_STEP_SUMMARY"

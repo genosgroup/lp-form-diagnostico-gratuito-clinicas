@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+/* Tema único escuro, por decisão de marca (grafite + branco + laranja). */
+@theme {
+  --color-bg: #0d0c0b;
+  --color-bg-2: #12100e;
+  --color-surface: #181513;
+  --color-surface-2: #211d19;
+  --color-surface-3: #2a2520;
+  --color-line: #2f2a25;
+  --color-line-2: #453d35;
+  --color-text: #f6f2ed;
+  --color-muted: #a69c91;
+  --color-dim: #756b61;
+  --color-orange: #ff6b1f;
+  --color-orange-2: #ff8a3d;
+  --color-amber: #ffb266;
+  --color-ink: #1a0d05;
+  --color-crit: #ff6a5c;
+  --color-warn: #f2b84b;
+  --color-ok: #6ccb8f;
+
+  --radius-ctl: 10px;
+  --radius-card: 14px;
+  --radius-panel: 20px;
+
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-enter: enter 0.34s var(--ease-soft) both;
+  --animate-enter-back: enter-back 0.34s var(--ease-soft) both;
+  --animate-rise: rise 0.32s var(--ease-soft) both;
+  --animate-blink: blink 1.4s steps(2, end) infinite;
+  --animate-ping-dot: ping-dot 1.4s ease-out infinite;
+  --animate-ping-live: ping-dot 1.2s ease-out infinite;
+  --animate-spin-fast: spin 0.7s linear infinite;
+  --animate-spin-btn: spin 0.8s linear infinite;
+  --animate-dash: dash 1.2s linear infinite;
+  --animate-pop: pop 0.4s var(--ease-soft);
+  --animate-glow: glow 2.8s ease-in-out infinite;
+  --animate-nudge: nudge 1.4s ease-in-out infinite;
+  --animate-shine: shine 3.4s ease-in-out infinite;
+
+  @keyframes enter {
+    from { opacity: 0.001; transform: translateX(18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes enter-back {
+    from { opacity: 0.001; transform: translateX(-18px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes rise {
+    from { opacity: 0.001; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes blink {
+    50% { opacity: 0.25; }
+  }
+  @keyframes ping-dot {
+    0% { box-shadow: 0 0 0 0 rgba(255, 107, 31, 0.6); }
+    100% { box-shadow: 0 0 0 8px rgba(255, 107, 31, 0); }
+  }
+  @keyframes dash {
+    to { stroke-dashoffset: -11; }
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.14); }
+    100% { transform: scale(1); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 31, 0); }
+    50% { box-shadow: 0 0 0 4px rgba(255, 107, 31, 0.1), 0 10px 32px -14px rgba(255, 107, 31, 0.7); }
+  }
+  @keyframes nudge {
+    0%, 100% { transform: translateY(-1px); }
+    50% { transform: translateY(2px); }
+  }
+  @keyframes shine {
+    0% { transform: translateX(-110%); }
+    45%, 100% { transform: translateX(110%); }
+  }
+}
+
+/* Fontes carregadas pelo next/font no layout. */
+@theme inline {
+  --font-display: var(--font-bricolage), var(--font-manrope), system-ui, sans-serif;
+  --font-body: var(--font-manrope), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button,
+  input {
+    font: inherit;
+    color: inherit;
+  }
+  /* O preflight do Tailwind tira cor e sublinhado dos links; o original usa os do navegador. */
+  a {
+    color: var(--color-amber);
+    text-decoration: underline;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  /* Fundo: brilho laranja no canto e grade sutil que some para baixo. */
+  .page-glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(520px 380px at 100% -8%, rgba(255, 107, 31, 0.16), transparent 70%),
+      radial-gradient(420px 320px at -10% 110%, rgba(255, 178, 102, 0.06), transparent 70%);
+  }
+  .page-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(180deg, #000, transparent 60%);
+  }
+
+  /* Botão principal, com o reflexo que atravessa de tempos em tempos. */
+  .btn-primary {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 62px;
+    padding: 16px 22px;
+    border: 0;
+    border-radius: var(--radius-card);
+    cursor: pointer;
+    background: linear-gradient(180deg, #ff7a2f, var(--color-orange));
+    color: var(--color-ink);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 10px 30px -10px rgba(255, 107, 31, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.15s var(--ease-soft), filter 0.15s;
+  }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.38) 50%, transparent 70%);
+    transform: translateX(-110%);
+    animation: var(--animate-shine);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+  }
+  .btn-primary:hover::after {
+    animation-duration: 1.6s;
+  }
+  .btn-primary:active {
+    transform: scale(0.985);
+  }
+  .btn-primary:disabled {
+    filter: saturate(0.6) brightness(0.8);
+    cursor: progress;
+  }
+  .btn-primary:disabled::after {
+    animation: none;
+  }
+  .btn-primary svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Ícones das opções: traço 24x24 (a fatia da pizza usa .f, preenchida). */
+  .ico-stroke {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .ico-stroke .f {
+    fill: currentColor;
+    stroke: none;
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

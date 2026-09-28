@@ -83,4 +83,5 @@ O site roda no Cloudflare Workers com o adaptador [OpenNext](https://opennext.js
 
 - **Automático:** cada push na `main` publica pelo GitHub Actions (`.github/workflows/deploy.yml`). O repositório precisa dos segredos `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` em *Settings > Secrets and variables > Actions*.
 - **Manual:** `npx wrangler login` e depois `npm run deploy`.
+  - No Windows, o `opennextjs-cloudflare deploy` pode falhar ao iniciar o runtime local (`workerd`: *access violation*). Nesse caso, depois do build, publique direto com o wrangler: `npm run cf:build` e então `OPEN_NEXT_DEPLOY=true npx wrangler deploy` (no PowerShell: `$env:OPEN_NEXT_DEPLOY="true"; npx wrangler deploy`). Sempre que possível, prefira o deploy automático (Linux).
 - **Endereço:** por enquanto só o `workers.dev` (`https://lp-form-diagnostico-gratuito-clinicas.group-656.workers.dev`). Um domínio ou rota, se vier, é ligado no painel da Cloudflare (*Settings > Domains & Routes*), e não no `wrangler.jsonc`.

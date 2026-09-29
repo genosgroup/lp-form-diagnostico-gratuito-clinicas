@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-lp-form-diagnostico-gratuito-clinicas
+  group: deploy-lp-form-receita-oculta-clinicas
   cancel-in-progress: false
 
 jobs:

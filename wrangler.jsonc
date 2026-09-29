@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   // Worker gerado pelo OpenNext a partir do build do Next.js
-  "name": "lp-form-diagnostico-gratuito-clinicas",
+  "name": "lp-form-receita-oculta-clinicas",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -13,7 +13,7 @@
     {
       // Referência ao próprio Worker, exigida pelo OpenNext (o nome precisa ser igual ao "name")
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "lp-form-diagnostico-gratuito-clinicas"
+      "service": "lp-form-receita-oculta-clinicas"
     }
   ],
   "ratelimits": [

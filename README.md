@@ -58,7 +58,7 @@ Os leads vão para uma planilha do Google por um Apps Script publicado como App 
    npx wrangler secret put SHEETS_WEBHOOK_URL     # cole a URL /exec
    npx wrangler secret put SHEETS_WEBHOOK_TOKEN   # cole o token
    ```
-   (ou no painel: *Workers > lp-form-diagnostico-gratuito-clinicas > Settings > Variables and Secrets*, como **Secret**).
+   (ou no painel: *Workers > lp-form-receita-oculta-clinicas > Settings > Variables and Secrets*, como **Secret**).
 
 A aba **Leads** é criada pelo `configurar` e o cabeçalho completo nasce com o primeiro lead.
 
@@ -83,9 +83,9 @@ Nenhuma tag é carregada por enquanto. Os eventos do funil já vão para o `wind
 
 ## Deploy (Cloudflare Workers)
 
-O site roda no Cloudflare Workers com o adaptador [OpenNext](https://opennext.js.org/cloudflare) (`wrangler.jsonc` e `open-next.config.ts`). O Worker se chama `lp-form-diagnostico-gratuito-clinicas`.
+O site roda no Cloudflare Workers com o adaptador [OpenNext](https://opennext.js.org/cloudflare) (`wrangler.jsonc` e `open-next.config.ts`). O Worker se chama `lp-form-receita-oculta-clinicas`.
 
 - **Automático:** cada push na `main` publica pelo GitHub Actions (`.github/workflows/deploy.yml`). O repositório precisa dos segredos `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` em *Settings > Secrets and variables > Actions*.
 - **Manual:** `npx wrangler login` e depois `npm run deploy`.
   - No Windows, o `opennextjs-cloudflare deploy` pode falhar ao iniciar o runtime local (`workerd`: *access violation*). Nesse caso, depois do build, publique direto com o wrangler: `npm run cf:build` e então `OPEN_NEXT_DEPLOY=true npx wrangler deploy` (no PowerShell: `$env:OPEN_NEXT_DEPLOY="true"; npx wrangler deploy`). Sempre que possível, prefira o deploy automático (Linux).
-- **Endereço:** `genosgroup.com.br/receitaoculta`. O Next serve tudo sob o `basePath` `/receitaoculta` (`src/lib/site.ts`) e a rota `genosgroup.com.br/receitaoculta*` aponta para este Worker (Cloudflare > *Workers Routes* da zona `genosgroup.com.br`), não no `wrangler.jsonc`, como no ebook. O resto do domínio continua no Worker `lp-genos-principal`. No `workers.dev` (`https://lp-form-diagnostico-gratuito-clinicas.group-656.workers.dev`), a raiz redireciona para `/receitaoculta`.
+- **Endereço:** `genosgroup.com.br/receitaoculta`. O Next serve tudo sob o `basePath` `/receitaoculta` (`src/lib/site.ts`) e a rota `genosgroup.com.br/receitaoculta*` aponta para este Worker (Cloudflare > *Workers Routes* da zona `genosgroup.com.br`), não no `wrangler.jsonc`, como no ebook. O resto do domínio continua no Worker `lp-genos-principal`. No `workers.dev` (`https://lp-form-receita-oculta-clinicas.group-656.workers.dev`), a raiz redireciona para `/receitaoculta`.

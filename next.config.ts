@@ -35,7 +35,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Mesma URL pública: genosgroup.com.br/diagnostico
+  // Mesma URL pública: genosgroup.com.br/receitaoculta
   basePath: BASE_PATH,
   poweredByHeader: false,
   async headers() {

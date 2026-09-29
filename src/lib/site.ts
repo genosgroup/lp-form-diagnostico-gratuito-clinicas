@@ -4,10 +4,10 @@
  */
 
 /**
- * A LP responde em genosgroup.com.br/diagnostico: a rota `genosgroup.com.br/diagnostico*`
+ * A LP responde em genosgroup.com.br/receitaoculta: a rota `genosgroup.com.br/receitaoculta*`
  * aponta para este Worker (painel da Cloudflare) e o Next serve tudo sob este basePath.
  */
-export const BASE_PATH = "/diagnostico";
+export const BASE_PATH = "/receitaoculta";
 export const SITE_URL = "https://genosgroup.com.br";
 
 /** Caminho de um arquivo de public/ (o <img> não recebe o basePath sozinho). */

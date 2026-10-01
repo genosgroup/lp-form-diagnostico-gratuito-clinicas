@@ -157,8 +157,14 @@ export default function Quiz() {
       { score: x.score, classificacao: x.classificacao, temperatura: x.temperatura, cenario_intermediario: x.cenarios.intermediario.receita },
       id,
     );
+    // Nomes padrão das duas plataformas: só "Lead" na Meta e "generate_lead"
+    // no GA4 contam como conversão otimizável. O lead_submitted acima é o
+    // evento interno, bom para funil, inútil para a campanha otimizar.
     try {
       window.fbq?.("track", "Lead", { content_name: "Diagnóstico Receita Oculta" }, { eventID: id + "-lead" });
+    } catch {}
+    try {
+      window.gtag?.("event", "generate_lead", { origem: "Diagnóstico Receita Oculta" });
     } catch {}
     ir("res");
     pushHist("res");

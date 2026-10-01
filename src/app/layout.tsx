@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, IBM_Plex_Mono, Manrope } from "next/font/google";
 import { BASE_PATH, SITE_URL, asset } from "@/lib/site";
+import Tracking, { TrackingNoScript } from "@/components/Tracking";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -47,7 +48,11 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${bricolage.variable} ${manrope.variable} ${plexMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Tracking />
+        <TrackingNoScript />
+        {children}
+      </body>
     </html>
   );
 }

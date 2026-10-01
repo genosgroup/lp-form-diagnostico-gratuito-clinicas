@@ -1,7 +1,12 @@
 /**
  * Rastreamento no navegador: origem do visitante (UTMs e click IDs) e eventos do funil.
- * Os eventos vão para o window.dataLayer; se um GTM ou Pixel for instalado depois,
- * ele já encontra tudo lá (e o fbq, se existir, recebe os mesmos eventos).
+ * Cada evento vai para três destinos: o window.dataLayer (para um GTM futuro
+ * encontrar tudo pronto), o GA4 e o Pixel da Meta.
+ *
+ * O GA4 entrou depois: por um tempo esta página carregou sem tag nenhuma, e
+ * estes eventos eram empilhados no dataLayer que ninguém lia. Mandar para os
+ * três não custa nada e evita que a página volte a medir no vazio se uma das
+ * tags for removida.
  */
 import { QUIZ_VERSION } from "./site";
 import { TRACKING_KEYS, TRACKING_MAX_LENGTH, type Tracking } from "./lead";
@@ -10,6 +15,7 @@ declare global {
   interface Window {
     dataLayer?: Record<string, unknown>[];
     fbq?: (...args: unknown[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -68,6 +74,9 @@ export function track(evento: string, params: Record<string, unknown> = {}, lead
   const ev = { event: evento, ...params, lead_id: leadId ?? undefined, quiz_version: QUIZ_VERSION, ts: new Date().toISOString() };
   try {
     (window.dataLayer = window.dataLayer || []).push(ev);
+  } catch {}
+  try {
+    window.gtag?.("event", evento, params);
   } catch {}
   try {
     window.fbq?.("trackCustom", evento, params);
